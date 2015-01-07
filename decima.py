@@ -16,9 +16,7 @@
 
 import argparse
 import gzip
-import math
-import os
-import sys
+
 
 def bitfy(v):
     v, r = divmod(v, 256)
@@ -51,13 +49,9 @@ class Decima(object):
         """
 
         # Output file name
-        encoded_file_name = self.decima_file + ".decima"
+        encoded_file = self.decima_file + ".decima"
 
-        # Details needed for displaying a progress bar
-        file_size = os.path.getsize(self.decima_file)
-        iterations = math.floor((file_size / self.chunk_size) + 1)
-
-        with gzip.open(encoded_file_name, mode='w', compresslevel=9) as decimal_decimination:
+        with gzip.open(encoded_file, mode='w', compresslevel=9) as decimals:
             with open(self.decima_file, "rb") as to_deciminate:
                 # Grab a chunk of size self.chunk_size, get the integer
                 # representation of that chunk, output that as UTF-8, and gzip
@@ -66,11 +60,9 @@ class Decima(object):
                 # While chunk != b""
                 while chunk:
                     # UTF-8 string of the integer representation of the chunk
-                    human_readable = bytes(
-                        str(int.from_bytes(
-                            chunk, byteorder='little')
-                        ).encode('UTF-8')
-                    )
+                    human_readable = bytes(str(
+                        int.from_bytes(chunk, byteorder='little')
+                    ).encode('UTF-8'))
 
                     # If a chunk is smaller than chunk size (usually the last
                     # chunk in a file), append a : and the chunk size to the
@@ -86,7 +78,7 @@ class Decima(object):
                     human_readable_line = human_readable + "\n".encode("UTF-8")
 
                     # Write the encoded string to file
-                    decimal_decimination.write(human_readable_line)
+                    decimals.write(human_readable_line)
 
                     # Grab another chunk from the input
                     chunk = to_deciminate.read(self.chunk_size)
@@ -128,11 +120,11 @@ class Decima(object):
         """
 
         # Output as the given filename without the .decima extension
-        decoded_file_name = self.decima_file.rstrip(".decima")
+        decoded_file = self.decima_file.rstrip(".decima")
 
-        with open(decoded_file_name, mode='wb') as output:
-            with gzip.open(self.decima_file, mode='r') as decimal_decimination:
-                for line in decimal_decimination:
+        with open(decoded_file, mode='wb') as output:
+            with gzip.open(self.decima_file, mode='r') as decimals:
+                for line in decimals:
                     decoded = self.decode_line(line)
                     output.write(decoded)
 
