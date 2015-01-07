@@ -120,7 +120,7 @@ class Decima(object):
         """
 
         # Output as the given filename without the .decima extension
-        decoded_file = self.decima_file.rstrip(".decima")
+        decoded_file = self.decima_file.replace(".decima","")
 
         with open(decoded_file, mode='wb') as output:
             with gzip.open(self.decima_file, mode='r') as decimals:
